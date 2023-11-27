@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   TextInput,
@@ -9,14 +9,39 @@ import {
   Button,
   Group,
   Text,
+  ActionIcon,
+  Grid,
+  NumberInput,
 } from '@mantine/core';
+import { randomId } from '@mantine/hooks';
 import { useMedicines } from '../hooks/useMedicines';
 import { useForm } from '@mantine/form';
-
+import { IconTrash } from '@tabler/icons-react';
+import api from '../api/axios';
+import { notifications } from '@mantine/notifications';
+import { toast, ToastContainer } from 'react-toastify';
 export interface IMedicine {
-  _id: string;
-  name: string;
+  [key: string]: string
 }
+
+const units = [
+  "gram",
+  "lạng",
+  "chén",
+  "hạt",
+  "viên",
+  "lá",
+  "cuộn",
+  "cốc",
+  "lọ",
+  "ống",
+  "túi",
+  "đĩa",
+  "ấm",
+  "túi trà",
+  "gói",
+  "hộp",
+];
 
 interface PrescriptionFormValues {
   name: string;
@@ -27,120 +52,149 @@ interface PrescriptionFormValues {
   description: string;
 }
 
-const CreatePrescriptionPage = () => {
-  const [filteredMedicines, setFilteredMedicines] = useState('');
-  const [selectedMedicine, setSelectedMedicine] = useState('');
+const CreatePrescriptionComponent = () => {
   const { medicines } = useMedicines('');
 
-  // const handleMedicineChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const selectedMedicineId = event.target.value;
-  //   const selectedMedicine = medicines.find(medicine => medicine._id === selectedMedicineId);
-  //   setSelectedMedicine(selectedMedicine);
-  // };
-
-  // const onMedicineSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const searchTerm = event.target.value.toLowerCase();
-  //   const filteredMedicines = medicines.filter(medicine => medicine.name.toLowerCase().includes(searchTerm));
-  //   setFilteredMedicines(filteredMedicines);
-  // };
 
   const form = useForm({
     initialValues: {
-      name: '',
-      medicine: '',
-      dosage: '',
-      unit: '',
-      usage: '',
-      description: '',
+      medicines: [
+        {
+          key: randomId(),
+          medicine: '',
+          dosage: {
+            unit: 'gram',
+            amount: 0,
+          },
+          usage: '',
+          description: '',
+        }
+      ]
     },
     validate: {
-      name: (value) => value.trim() === '' ? 'Name is required' : null,
-      medicine: (value) => value === '' ? 'Medicine is required' : null,
-      dosage: (value) => value.trim() === '' ? 'Dosage is required' : null,
-      unit: (value) => value === '' ? 'Unit is required' : null,
-      usage: (value) => value.trim() === '' ? 'Usage is required' : null,
+      medicines: (value) => value[0].medicine.trim() === '' ? 'Name is required' : null,
+      // medicine: (value) => value === '' ? 'Medicine is required' : null,
+      // dosage: (value) => value.trim() === '' ? 'Dosage is required' : null,
+      // unit: (value) => value === '' ? 'Unit is required' : null,
+      // usage: (value) => value.trim() === '' ? 'Usage is required' : null,
     },
   });
 
-  const handleSubmit = (values: any) => {
-    // Submit form data to server or perform other actions
-    console.log(values);
+
+
+  const handleAddMedicine = () => {
+    form.insertListItem('medicines', {
+      key: randomId(),
+      name: '',
+      medicine: '',
+      dosage: {
+        unit: 'gram',
+        amount: 0,
+      },
+      usage: '',
+      description: '',
+    })
   };
 
+  const handleSubmit = async (values: any) => {
+    console.log(values);
+    form.validate()
+    try {
+      const res = await api.post('prescription', values)
+      if (res?.data?._id) {
+        toast.success(`Tạo thành công bài thuốc ${res.data.name}`)
+      }
+    } catch(error: any) {
+      toast.error(error.message)
+    }
+  }
+
+
+  const medicinesOption = medicines.map((medicine) => ({
+    value: medicine._id,
+    label: medicine.name,
+  }))
+
+  
   return (
-    <Box p="md" m="md">
-      <Text>Create Prescription</Text>
-      <Box mt="md">
-          <TextInput
-            label="Name"
-            placeholder="Enter prescription name"
-            {...form.getInputProps('name')}
-            error={form.errors.name}
-          />
-      </Box>
+    <Box mx="auto">
+      <Text className="my-4 font-medium text-xl text-blue-400">Tạo bài thuốc</Text>
+      <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+      <TextInput
+        className="my-4"
+        label="Bài Thuốc"
+        placeholder="Nhập tên bài thuốc"
+        {...form.getInputProps('name')}
+        error={form.errors.name}
+      />
+      
+        {
+          form.values.medicines.map((medicine, index) => {
+            return (
+              <Grid key={medicine.key} className="my-4">
+                <Grid.Col span={6}>
+                  <Select
+                    label="Tên Vị thuốc"
+                    placeholder="Nhập tên vị thuốc"
+                    data={medicinesOption}
+                    searchable
+                    {...form.getInputProps(`medicines.${index}.medicine`)}
+                    error={form.errors.name}
+                  />
+                </Grid.Col>
+                <Grid.Col span={2}>
+                  <NumberInput
+                    label="Số Lượng"
+                    {...form.getInputProps(`medicines.${index}.dosage.amount`)}
+                  />
+                </Grid.Col>
+                <Grid.Col span={3}>
+                  <Select
+                    label="Đơn vị"
+                    placeholder="Chọn Đơn vị"
+                    data={units}
+                    searchable
+                    {...form.getInputProps(`medicines.${index}.dosage.unit`)}
+                    />
+                  </Grid.Col>
+                <Grid.Col span={1}>
+                    <div className='mt-7'>
+                      <ActionIcon color="red" onClick={() => form.removeListItem('medicines', index)}>
+                        <IconTrash size="1rem" />
+                      </ActionIcon>
+                    </div>
+                  </Grid.Col>
+              </Grid>
+            )
+          })
+        }
+         <Group>
+          <Button
+              onClick={() => handleAddMedicine()}
+            >
+            Thêm vị thuốc
+          </Button>
+         </Group>
 
-      <Box mt="md">
-        <Group>
-          <Select
-              label="Medicine"
-              placeholder="Select a medicine"
-              data={medicines.map((medicine) => ({
-                value: medicine._id,
-                label: medicine.name,
-              }))}
-              searchable
-              {...form.getInputProps('medicine')}
-              error={form.errors.medicine}
-            />
-          <TextInput
-            label="Dosage"
-            placeholder="Enter dosage amount"
-            {...form.getInputProps('dosage')}
-            error={form.errors.dosage}
-            />
-          <Select
-            label="Unit"
-            placeholder="Select dosage unit"
-            data={['mg', 'g', 'ml']}
-            {...form.getInputProps('unit')}
-            error={form.errors.unit}
-            />
-          </Group>
-      </Box>
 
-      <Box mt="md">
         <Textarea
-          label="Usage"
-          placeholder="Enter usage instructions"
+          className="my-4 min-h-1"
+          label="Hướng dẫn Sử dụng"
+          placeholder="Nhập nội dung"
+          minRows={4}
+          maxRows={12}
+          autosize
           {...form.getInputProps('usage')}
           error={form.errors.usage}
         />
-      </Box>
 
-      <Box mt="md">
-        <Textarea
-          label="Description"
-          placeholder="Enter prescription description"
-          {...form.getInputProps('description')}
-        />
-      </Box>
-
-      <Box mt="md">
-        <Button
-          type="submit"
-          form="prescriptionForm"
-          onClick={() => {
-           handleSubmit(form.values);
-          }}
-        >
-          Create Prescription
-        </Button>
-      </Box>
-
-      <form id="prescriptionForm">
-      </form>
+        <Group justify={'center'}>
+          <Button className="my-4" type="submit">Tạo Bài Thuốc</Button>
+        </Group>
+        </form >
+        <ToastContainer />
     </Box>
   );
 };
 
-export default CreatePrescriptionPage;
+export default CreatePrescriptionComponent;
