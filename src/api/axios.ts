@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'https://thuonghanluan.vercel.app/api/',
+  baseURL: 'https://thuonghanluan-be.vercel.app/api/',
 })
 
 api.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
