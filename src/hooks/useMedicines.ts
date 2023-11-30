@@ -1,8 +1,8 @@
 import axios from 'axios'
 import useSWR from 'swr'
-import api from '../api/axios'
+import api from '@/api/axios'
 
-import { IMedicine } from '../components/PrescriptionForm'
+import { IMedicine } from '@/components/PrescriptionForm'
 
 export function useMedicines(name: string) {
 

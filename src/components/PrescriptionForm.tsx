@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   TextInput,
@@ -12,13 +12,13 @@ import {
   ActionIcon,
   Grid,
   NumberInput,
+  Input,
 } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
-import { useMedicines } from '../hooks/useMedicines';
+import { useMedicines } from '../hooks/useMedicines'
 import { useForm } from '@mantine/form';
 import { IconTrash } from '@tabler/icons-react';
 import api from '../api/axios';
-import { notifications } from '@mantine/notifications';
 import { toast, ToastContainer } from 'react-toastify';
 export interface IMedicine {
   [key: string]: string
@@ -43,17 +43,12 @@ const units = [
   "hộp",
 ];
 
-interface PrescriptionFormValues {
-  name: string;
-  medicine: string;
-  dosage: string;
-  unit: string;
-  usage: string;
-  description: string;
-}
-
 const CreatePrescriptionComponent = () => {
-  const { medicines } = useMedicines('');
+  const [medicines, setMedicines] = useState<IMedicine[]>([]);
+
+  useEffect(() => {
+    api.get('medicine').then(res => setMedicines(res.data))
+  }, [])
 
 
   const form = useForm({
@@ -105,7 +100,7 @@ const CreatePrescriptionComponent = () => {
         toast.success(`Tạo thành công bài thuốc ${res.data.name}`)
       }
     } catch(error: any) {
-      toast.error(error.message)
+      toast.error(error.response.data.message)
     }
   }
 
@@ -118,7 +113,7 @@ const CreatePrescriptionComponent = () => {
   
   return (
     <Box mx="auto">
-      <Text className="my-4 font-medium text-xl text-blue-400">Tạo bài thuốc</Text>
+      <Text className="my-4 font-bold text-2xl text-blue-400">Tạo bài thuốc</Text>
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
       <TextInput
         className="my-4"
@@ -149,14 +144,12 @@ const CreatePrescriptionComponent = () => {
                   />
                 </Grid.Col>
                 <Grid.Col span={3}>
-                  <Select
-                    label="Đơn vị"
-                    placeholder="Chọn Đơn vị"
-                    data={units}
-                    searchable
-                    {...form.getInputProps(`medicines.${index}.dosage.unit`)}
-                    />
-                  </Grid.Col>
+                  <Input.Wrapper label="Đơn vị">
+                    <Input
+                      {...form.getInputProps(`medicines.${index}.dosage.unit`)}
+                      />
+                  </Input.Wrapper>
+                </Grid.Col>
                 <Grid.Col span={1}>
                     <div className='mt-7'>
                       <ActionIcon color="red" onClick={() => form.removeListItem('medicines', index)}>
@@ -192,7 +185,7 @@ const CreatePrescriptionComponent = () => {
           <Button className="my-4" type="submit">Tạo Bài Thuốc</Button>
         </Group>
         </form >
-        <ToastContainer />
+        {/* <ToastContainer /> */}
     </Box>
   );
 };
