@@ -168,6 +168,25 @@ const CreatePrescriptionComponent = () => {
             Thêm vị thuốc
           </Button>
          </Group>
+        
+        <Group>
+        <TextInput
+            className="my-4 w-80"
+            label="Phạm vi bài thuốc"
+            defaultValue={'tính hàn'}
+            // placeholder="Phạm vi bài thuốc"
+            {...form.getInputProps('scope')}
+            error={form.errors.name}
+          />
+          <Select
+            className="my-4 w-72"
+            label="Tính hàn/nhiệt của bài thuốc"
+            placeholder="Nhập Tính hàn/nhiệt"
+            data={['tính hàn', 'tính nhiệt', 'tính trung vị']}
+            {...form.getInputProps('thermal ')}
+            error={form.errors.name}
+          />
+        </Group>
 
 
         <Textarea
