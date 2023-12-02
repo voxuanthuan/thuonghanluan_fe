@@ -56,9 +56,9 @@ const CreateMedicineForm = () => {
   
   return (
     <Layout>
-      <div className="min-h-screen max-w-4xl bg-white px-1 md:px-5 w-full mt-5 mx-auto">
-        <Box className='w-full px-10'>
-          <Text className="my-4 font-bold text-xl text-blue-500 underline">Tạo vị thuốc</Text>
+      <div className="min-h-screen max-w-2xl bg-white px-5 w-full mt-5 mx-auto">
+        <Box className='w-full'>
+          <h2 className="my-4 font-bold text-xl text-blue-400">Tạo vị thuốc</h2>
           <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <TextInput
             className="my-4"

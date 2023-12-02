@@ -113,8 +113,8 @@ const CreatePrescriptionComponent = () => {
   }))
 
   return (
-    <Box mx="auto">
-      <Text className="my-4 font-bold text-2xl text-blue-400">Tạo bài thuốc</Text>
+    <Box mx="auto px-6">
+      <h2 className="my-4 font-bold text-2xl text-blue-400">Tạo bài thuốc</h2>
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
       <TextInput
         className="my-4"
@@ -123,12 +123,12 @@ const CreatePrescriptionComponent = () => {
         {...form.getInputProps('name')}
         error={form.errors.name}
         />
-        <section className="my-4 pl-5">
+        <section className="my-4">
         {
           form.values.medicines.map((medicine, index: any) => {
             return (
               <Grid key={medicine.key} className="my-6">
-                <Grid.Col span={6}>
+                <Grid.Col span={{ base: 12, md: 6,}}>
                   <Select
                     label="Tên Vị thuốc"
                     placeholder="Nhập tên vị thuốc"
@@ -137,13 +137,13 @@ const CreatePrescriptionComponent = () => {
                     {...form.getInputProps(`medicines.${index}.medicine`)}
                   />
                 </Grid.Col>
-                <Grid.Col span={2}>
+                <Grid.Col span={{base: 6, md: 2}}>
                   <NumberInput
                     label="Số Lượng"
                     {...form.getInputProps(`medicines.${index}.dosage.amount`)}
                   />
                 </Grid.Col>
-                <Grid.Col span={3}>
+                <Grid.Col span={{base: 4, md: 3}}>
                   <Input.Wrapper label="Đơn vị">
                     <Input
                       {...form.getInputProps(`medicines.${index}.dosage.unit`)}
@@ -152,7 +152,7 @@ const CreatePrescriptionComponent = () => {
                 </Grid.Col>
                 <Grid.Col span={1}>
                     <div className='mt-7'>
-                      <ActionIcon color="red" onClick={() => form.removeListItem('medicines', index)}>
+                      <ActionIcon size={'lg'} color="red" onClick={() => form.removeListItem('medicines', index)}>
                         <IconTrash size="1rem" />
                       </ActionIcon>
                     </div>
@@ -173,14 +173,14 @@ const CreatePrescriptionComponent = () => {
         
         <Group>
         <TextInput
-            className="my-4 w-80"
+            className="my-4 w-full"
             label="Phạm vi bài thuốc"
             placeholder="Nhập Phạm vi bài thuốc"
             {...form.getInputProps('scope')}
           />
           <Select
             defaultValue={'tính hàn'}
-            className="my-4 w-72"
+            className="my-4 w-full"
             label="Tính hàn/nhiệt của bài thuốc"
             data={['tính hàn', 'tính nhiệt', 'tính trung vị']}
             {...form.getInputProps('thermal ')}

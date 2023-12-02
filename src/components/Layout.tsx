@@ -2,7 +2,7 @@ import Header from "./Header"
 
 const Layout = ({children}: any) => {
   return (
-    <main>
+    <main className="min-h-screen background-layout">
       <Header />
       {children}
     </main>

@@ -20,7 +20,7 @@ const Header = () => {
     </Anchor>
   ))
   return (
-    <Breadcrumbs className="h-10 mt-3 ml-4">
+    <Breadcrumbs className="h-10 ml-4 pt-12 pb-6">
       {items}    
     </Breadcrumbs>
   )

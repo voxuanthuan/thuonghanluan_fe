@@ -51,15 +51,17 @@ const handleChange = (v: string | null) => {
 };
   return (
     <Layout>
-      <div className="min-h-screen max-w-2xl m-auto mt-3 bg-white px-5">
-        <Select 
-          className='w-[400px] h-10'
+      <div className="max-w-2xl m-auto mt-3 bg-white px-5 flex align-middle flex-col">
+        <div className=''>
+          <Select 
+          className='w-full h-10'
           placeholder='Tìm kiếm bài thuốc'
           onSearchChange={handleChange}
           onSelect={handleSelect}
           searchable
           data={optionPresciption}
         />
+        </div>
 
         <div className='mt-12'>
           <h3 className='font-bold'>{prescriptionSelected?.name}</h3>

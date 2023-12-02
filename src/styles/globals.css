@@ -25,3 +25,10 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+/* 
+.background-layout {
+  background-image: url('/static/images/m-background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+} */
