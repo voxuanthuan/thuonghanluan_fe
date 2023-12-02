@@ -42,11 +42,11 @@ const CreateMedicineForm = () => {
 
 
   const handleSubmit = async (values: any) => {
-    console.log(values);
     form.validate()
     try {
       const res = await api.post('medicine', values)
       if (res?.data?._id) {
+        form.reset()
         toast.success(`Tạo thành công bài thuốc ${res.data.name}`)
       }
     } catch(error: any) {

@@ -53,8 +53,10 @@ const CreatePrescriptionComponent = () => {
 
   const form = useForm({
     initialValues: {
+      name: '',
       medicines: [
         {
+          name: '',
           key: randomId(),
           medicine: '',
           dosage: {
@@ -64,17 +66,18 @@ const CreatePrescriptionComponent = () => {
           usage: '',
           description: '',
         }
-      ]
+      ],
+      usage: '',
+      scope: '',
+      thermal: ''
     },
     validate: {
-      medicines: (value) => value[0].medicine.trim() === '' ? 'Name is required' : null,
-      // medicine: (value) => value === '' ? 'Medicine is required' : null,
-      // dosage: (value) => value.trim() === '' ? 'Dosage is required' : null,
-      // unit: (value) => value === '' ? 'Unit is required' : null,
-      // usage: (value) => value.trim() === '' ? 'Usage is required' : null,
+      name: (value) => value === '' ? 'Vui lòng nhập tên bài thuốc' : null,
+      medicines: (values) => values.filter(v => {
+        return v.medicine === ""
+      }).length > 0 ? 'Vui lòng nhập đầy đủ tên vị thuốc' : null,
     },
   });
-
 
 
   const handleAddMedicine = () => {
@@ -92,11 +95,10 @@ const CreatePrescriptionComponent = () => {
   };
 
   const handleSubmit = async (values: any) => {
-    console.log(values);
-    form.validate()
     try {
       const res = await api.post('prescription', values)
       if (res?.data?._id) {
+        form.reset();
         toast.success(`Tạo thành công bài thuốc ${res.data.name}`)
       }
     } catch(error: any) {
@@ -110,7 +112,6 @@ const CreatePrescriptionComponent = () => {
     label: medicine.name,
   }))
 
-  
   return (
     <Box mx="auto">
       <Text className="my-4 font-bold text-2xl text-blue-400">Tạo bài thuốc</Text>
@@ -121,12 +122,12 @@ const CreatePrescriptionComponent = () => {
         placeholder="Nhập tên bài thuốc"
         {...form.getInputProps('name')}
         error={form.errors.name}
-      />
-      
+        />
+        <section className="my-4 pl-5">
         {
-          form.values.medicines.map((medicine, index) => {
+          form.values.medicines.map((medicine, index: any) => {
             return (
-              <Grid key={medicine.key} className="my-4">
+              <Grid key={medicine.key} className="my-6">
                 <Grid.Col span={6}>
                   <Select
                     label="Tên Vị thuốc"
@@ -134,7 +135,6 @@ const CreatePrescriptionComponent = () => {
                     data={medicinesOption}
                     searchable
                     {...form.getInputProps(`medicines.${index}.medicine`)}
-                    error={form.errors.name}
                   />
                 </Grid.Col>
                 <Grid.Col span={2}>
@@ -161,30 +161,29 @@ const CreatePrescriptionComponent = () => {
             )
           })
         }
-         <Group>
+        {<span className='text-red-500'>{form.errors.medicines}</span>}
+         <Group className='my-4'>
           <Button
               onClick={() => handleAddMedicine()}
             >
             Thêm vị thuốc
           </Button>
          </Group>
+        </section>
         
         <Group>
         <TextInput
             className="my-4 w-80"
             label="Phạm vi bài thuốc"
-            defaultValue={'tính hàn'}
-            // placeholder="Phạm vi bài thuốc"
+            placeholder="Nhập Phạm vi bài thuốc"
             {...form.getInputProps('scope')}
-            error={form.errors.name}
           />
           <Select
+            defaultValue={'tính hàn'}
             className="my-4 w-72"
             label="Tính hàn/nhiệt của bài thuốc"
-            placeholder="Nhập Tính hàn/nhiệt"
             data={['tính hàn', 'tính nhiệt', 'tính trung vị']}
             {...form.getInputProps('thermal ')}
-            error={form.errors.name}
           />
         </Group>
 
@@ -197,7 +196,6 @@ const CreatePrescriptionComponent = () => {
           maxRows={12}
           autosize
           {...form.getInputProps('usage')}
-          error={form.errors.usage}
         />
 
         <Group justify={'center'}>
