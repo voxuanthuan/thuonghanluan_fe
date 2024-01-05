@@ -69,7 +69,7 @@ const handleChange = (v: string | null) => {
             {prescriptionSelected?.medicines.map((item) => {
               return (
                 <li className='leading-' key={item.medicine._id}>
-                  {`${item.medicine.name} (${item.dosage.amount} ${item.dosage.unit})`}
+                  {`${item.medicine} (${item.dosage.amount} ${item.dosage.unit})`}
                 </li>
               )
             })}

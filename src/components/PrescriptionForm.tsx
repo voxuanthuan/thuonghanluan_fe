@@ -129,11 +129,9 @@ const CreatePrescriptionComponent = () => {
             return (
               <Grid key={medicine.key} className="my-6">
                 <Grid.Col span={{ base: 12, md: 6,}}>
-                  <Select
+                  <TextInput
                     label="Tên Vị thuốc"
                     placeholder="Nhập tên vị thuốc"
-                    data={medicinesOption}
-                    searchable
                     {...form.getInputProps(`medicines.${index}.medicine`)}
                   />
                 </Grid.Col>
